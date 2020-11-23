@@ -1,3 +1,11 @@
+import com.commercehub.gradle.plugin.avro.GenerateAvroJavaTask
+
+buildscript {
+	dependencies {
+		classpath group: 'com.commercehub.gradle.plugin', name: 'gradle-avro-plugin', version: '0.16.0'
+	}
+}
+
 plugins {
 	id 'org.springframework.boot' version '2.4.0'
 	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
@@ -14,10 +22,12 @@ repositories {
 
 project.ext {
 	sparkVersion = '2.4.4'
+	avroVersion = '1.8.2'
 }
 
 dependencies {
 	implementation group: 'org.apache.spark', name: 'spark-core_2.12', version: sparkVersion
+	implementation group: 'org.apache.avro', name: 'avro', version: avroVersion
 	implementation 'org.springframework.boot:spring-boot-starter'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
@@ -25,3 +35,13 @@ dependencies {
 test {
 	useJUnitPlatform()
 }
+
+task generateAvro(type: GenerateAvroJavaTask) {
+	doFirst {
+		delete "${rootDir}/src/main/java/example/avro"
+	}
+	source("src/main/avro")
+	outputDir = file("src/main/java")
+}
+
+compileJava.source(generateAvro)

@@ -1,5 +1,6 @@
 package com.arcs.study.poc;
 
+import example.avro.Word;
 import org.apache.spark.SparkConf;
 import org.apache.spark.api.java.JavaPairRDD;
 import org.apache.spark.api.java.JavaRDD;
@@ -42,7 +43,11 @@ public class Application {
 
 		List<Tuple2<String, Integer>> output = counts.collect();
 		for(Tuple2<?, ?> tuple : output){
-			System.out.println(tuple._1() + ": " + tuple._2());
+			Word word = new Word();
+			word.setWord(tuple._1().toString());
+			word.setCount(Integer.parseInt(tuple._2().toString()));
+
+			System.out.println(word.getWord() + ": " + word.getCount());
 		}
 
 		ctx.stop();
